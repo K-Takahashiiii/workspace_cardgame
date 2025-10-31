@@ -1,52 +1,100 @@
-# プロジェクト参加手順（チームメンバー向け）
+# 🃏 カードゲーム大会運営アプリ（workspace_cardgame）
 
-以下の手順に従って、開発環境をセットアップしてください。
+## 📘 プロジェクト概要
+このリポジトリは、**カードゲーム大会を運営・参加するための2つのWebアプリ**を1つのGitリポジトリ（モノレポ）で管理します。
 
----
-
-## 🧩 手順
-
-1. **作業フォルダの作成**  
-   `work` フォルダの中に新しいフォルダを作成します。  
-   フォルダ名は **`workspace_cardgame`** を推奨します。
-
-2. **GitHubリポジトリへの招待を承認**  
-   チームリーダー（リポジトリ作成者）から届いた招待メールを開き、  
-   GitHub上でリポジトリへの参加を承認します。
-
-3. **Eclipseのワークスペース設定**  
-   Eclipseを起動し、先ほど作成したフォルダ  
-   `workspace_cardgame` をワークスペースとして指定します。
-
-4. **GitHubトークンの発行**  
-   GitHubの「Settings → Developer settings → Personal access tokens」から  
-   新しいトークンを発行してください。  
-   ※既存のトークンを使っても構いません。
-
-5. **Eclipseでリポジトリを複製**  
-   Eclipse上で  
-   **「Gitリポジトリーの複製（Clone a Git Repository）」** を選択し、  
-   チームのリポジトリURIと発行したトークンを使用してクローンします。
-
-6. **ローカルでの確認とPull**  
-   クローン後、Eclipseのプロジェクトビューでフォルダ構成を確認し、  
-   おおもとのフォルダ（リポジトリ全体）を **Pull（取得）** して最新状態に更新します。
-
-7. **サーバーの設定（Tomcat）**  
-   - メニューから **[Window] → [Preferences] → [Server] → [Runtime Environments]** を開きます。  
-   - **[Add]** をクリックし、インストール済みの Tomcat のバージョンを選択します（例：Tomcat 10）。  
-   - Tomcat のインストールディレクトリを指定して **Finish**。  
-   - その後、**[Servers] ビュー** に新しいサーバーを追加します。  
-   - プロジェクトをサーバーにドラッグ＆ドロップして関連付けてください。
+| プロジェクト名 | 役割 | URL例 |
+|---|---|---|
+| `organizer-app` | 主催者向け（大会作成・参加者管理など） | http://localhost:8080/organizer-app/ |
+| `player-app` | 参加者向け（大会参加・結果確認など） | http://localhost:8080/player-app/ |
 
 ---
 
-## ✅ 補足
-- これで開発環境の初期設定は完了です。  
-- 以降の作業（開発、コミット、プッシュ）は Eclipse 上で行います。
+## 🧑‍💻 開発環境
+| 項目 | 使用ツール / バージョン |
+|---|---|
+| IDE | Eclipse（Enterprise Edition 推奨） |
+| Java | JDK 8 |
+| サーバー | Apache Tomcat 8 |
+| DB | MySQL 8（予定） |
+| テンプレート | JSP |
+| 構成 | DAOパターン（MVC意識） |
 
 ---
 
-## 💭 今後の確認事項
-他のメンバーが追加で行う必要がある作業があるかは、  
-次のミーティングまたは先生の指示で確認予定です。
+## ⚙️ セットアップ手順（チームメンバー向け）
+
+### ① 招待の承認
+- GitHubでリポジトリ招待を承認。
+
+### ② リポジトリを複製（Eclipse）
+- **[ファイル] → [新規] → [Git リポジトリーの複製]**
+  - **URI**：`https://github.com/K-Takahashiiii/workspace_cardgame.git`
+  - **認証**：GitHubユーザー名 + 個人アクセストークン（PAT）
+  - **ディレクトリ**：例 `C:\Users\<ユーザー>\git\workspace_cardgame`
+
+> 🔐 トークンは各自で発行。共有しないこと。
+
+### ③ プロジェクトの登録（Import）
+- **[ファイル] → [インポート] → [Existing Projects into Workspace]**
+  - ルート：`C:\Users\<ユーザー>\git\workspace_cardgame`
+  - `organizer-app` と `player-app` を選んで **完了**
+
+### ④ サーバー設定（初回）
+- **Servers ビュー**で Tomcat v8.0 を追加
+- `organizer-app` / `player-app` をドラッグで割当
+- 起動確認：  
+  - `http://localhost:8080/player-app/test.jsp`  
+  - `http://localhost:8080/organizer-app/test.jsp`
+
+### ⑤ コミット & プッシュ
+- **Git Staging** に変更が両プロジェクト分まとめて出る
+- メッセージ入力 → **Commit and Push**（一括で反映）
+
+---
+
+## 📁 フォルダ構成
+workspace_cardgame/
+├─ .git/
+├─ .gitignore
+├─ README.md
+├─ organizer-app/
+│ ├─ src/
+│ └─ WebContent/
+│ ├─ index.jsp
+│ └─ WEB-INF/web.xml
+└─ player-app/
+├─ src/
+└─ WebContent/
+├─ index.jsp
+└─ WEB-INF/web.xml
+
+---
+
+## ✅ 動作確認URL
+| アプリ | ローカルURL例 |
+|---|---|
+| 参加者向け | `http://localhost:8080/player-app/test.jsp` |
+| 主催者向け | `http://localhost:8080/organizer-app/test.jsp` |
+
+---
+
+## 💬 コミットメッセージ例
+add: player-app の index.jsp を追加
+fix: organizer の文字化け対策（UTF-8）
+update: README にセットアップ手順を追記
+
+---
+
+## ⚠️ 注意
+- `.git` は親ディレクトリに **1つだけ**（モノレポ）。  
+- **空フォルダはGitに載らない**（ファイルを1つ以上作成してからコミット）。  
+- ポート競合時は片方のTomcatを停止してから起動。
+
+---
+
+## 🧱 今後の開発予定（MVP）
+- DAOでDB接続（MySQL Connector/J を `WEB-INF/lib` へ）
+- 主催者：イベント作成・参加者一覧
+- 参加者：大会一覧・エントリー
+- JSP + Servlet（MVC）で画面連携
