@@ -1,0 +1,2 @@
+# workspace_cardgame
+カードゲームイベント管理アプリ_3回目
