@@ -65,7 +65,7 @@ public class RegisterOrganizerServlet extends HttpServlet {
         }
 
         // DBへINSERT
-        String sql = "INSERT INTO organizers (name, pass, tell_num)"
+        String sql = "INSERT INTO organaizers (name, pass, tell_num)"
                    + " VALUES (?, ?, ?)";
 
         try (Connection con = DBUtil.getConnection();
