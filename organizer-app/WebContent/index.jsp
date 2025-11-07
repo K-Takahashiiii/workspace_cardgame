@@ -7,5 +7,6 @@
 
 
     <p><a href="register_organizer.jsp">新規登録はこちらから</a></p>
+    <p><a href="login_organizer.jsp">ログインはこちらから</a></p>
   </body>
 </html>
