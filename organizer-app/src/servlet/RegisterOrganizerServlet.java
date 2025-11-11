@@ -1,7 +1,5 @@
 package servlet;
 
-import util.DBUtil;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +10,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import util.DBUtil;
 
 @WebServlet("/registerOrganizer")
 public class RegisterOrganizerServlet extends HttpServlet {
@@ -65,7 +65,7 @@ public class RegisterOrganizerServlet extends HttpServlet {
         }
 
         // DBへINSERT
-        String sql = "INSERT INTO organaizers (name, pass, tell_num)"
+        String sql = "INSERT INTO organizers (name, pass, tell_num)"
                    + " VALUES (?, ?, ?)";
 
         try (Connection con = DBUtil.getConnection();
