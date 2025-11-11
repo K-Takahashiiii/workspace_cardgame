@@ -8,7 +8,7 @@ public class DBUtil {
 
     // DB接続情報（自分の環境に合わせて変更）
     private static final String URL =
-        "jdbc:mysql://10.251.197.147:3306/card_team"
+        "jdbc:mysql://10.251.197.147:3306/card_app"
       + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Tokyo&characterEncoding=UTF-8";
 
     private static final String USER = "card_team";       // ★ここを自分のユーザ名に
