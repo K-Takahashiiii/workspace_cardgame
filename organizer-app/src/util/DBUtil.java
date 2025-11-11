@@ -11,7 +11,7 @@ public class DBUtil {
         "jdbc:mysql://10.251.197.147:3306/card_team"
       + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Tokyo&characterEncoding=UTF-8";
 
-    private static final String USER = "root";       // ★ここを自分のユーザ名に
+    private static final String USER = "card_team";       // ★ここを自分のユーザ名に
     private static final String PASS = "rootpass";  // ★ここを自分のパスワードに
 
     // JDBCドライバのロード（クラス読み込み時に1回だけ実行）
