@@ -13,7 +13,7 @@ public class DBUtil {
       + "&serverTimezone=Asia/Tokyo"
       + "&characterEncoding=UTF-8";
 
-    // 学校のメインPC（共有DB）
+    // 宮っさんのメインPC（共有DB）
     private static final String REMOTE_URL  =
         "jdbc:mysql://10.251.197.147:3306/card_app" + PARAMS;
     private static final String REMOTE_USER = "card_team";
@@ -21,7 +21,7 @@ public class DBUtil {
 
     // 自分のPCのローカルDB（家で開発用）
     private static final String LOCAL_URL  =
-        "jdbc:mysql://localhost:3306/card_app" + PARAMS;
+        "jdbc:mysql://localhost:3306/tournament_app" + PARAMS;
     private static final String LOCAL_USER = "root";      // 自分のローカルMySQLユーザ
     private static final String LOCAL_PASS = "rootpass";  // そのパス
 
