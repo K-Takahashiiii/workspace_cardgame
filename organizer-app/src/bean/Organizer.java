@@ -56,6 +56,4 @@ public class Organizer implements Serializable {
 	public void setTellNum(String tellNum) {
 		this.tellNum = tellNum;
 	}
-
-
 }
