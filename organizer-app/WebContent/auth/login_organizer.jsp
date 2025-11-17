@@ -32,8 +32,8 @@
 </form>
 
 <p>
-    新規登録は <a href="registerOrganizer">こちら</a>
-    <a href="index">トップへ戻る</a>
+    新規登録は <a href="registerOrganizer">こちら</a><br>
+    <a href="menu">トップへ戻る</a>
 </p>
 
 </body>

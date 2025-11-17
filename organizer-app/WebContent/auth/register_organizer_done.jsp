@@ -11,8 +11,8 @@
 <p><strong><%= request.getAttribute("name") %></strong> さんの登録が完了しました。</p>
 
 <p>
-	<a href="registerOrganizer">もう一度登録する</a>
-	<a href="index">トップへ戻る</a>
+	<a href="registerOrganizer">もう一度登録する</a><br>
+	<a href="menu">トップへ戻る</a>
 
 </p>
 

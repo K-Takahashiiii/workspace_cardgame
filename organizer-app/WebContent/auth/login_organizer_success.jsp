@@ -25,6 +25,7 @@
     <form action="logoutOrganizer" method="get">
 		<button type="submit">ログアウト</button>
 	</form>
+	<br><a href="menu">トップへ戻る</a>
 </p>
 
 </body>

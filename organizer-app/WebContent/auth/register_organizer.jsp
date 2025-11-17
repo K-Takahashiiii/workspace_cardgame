@@ -36,7 +36,7 @@
 </form>
 
 <p>
-	<a href="index">トップへ戻る</a>
+	<a href="menu">トップへ戻る</a>
 </p>
 
 </body>
