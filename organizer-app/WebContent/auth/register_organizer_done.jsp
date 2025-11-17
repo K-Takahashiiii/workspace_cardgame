@@ -10,7 +10,12 @@
 
 <p><strong><%= request.getAttribute("name") %></strong> さんの登録が完了しました。</p>
 
-<p><a href="registerOrganizer">もう一度登録する</a></p>
+<p>
+	<a href="registerOrganizer">もう一度登録する</a>
+	<a href="index">トップへ戻る</a>
+
+</p>
+
 
 </body>
 </html>

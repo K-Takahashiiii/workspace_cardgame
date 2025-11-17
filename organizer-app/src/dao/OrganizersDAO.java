@@ -2,9 +2,12 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import bean.Organizer;
 import util.DBUtil;
+
 
 public class OrganizersDAO {
 
@@ -45,7 +48,7 @@ public class OrganizersDAO {
 
 	//LoginOrganizerから情報をもらってテーブルにアカウントが
 	//存在するか調べてセッションに登録して返すメソッド
-	public void loginCheck(
+	public Organizer loginCheck(
 			String name, String pass
 	) throws SQLException{
 
@@ -56,17 +59,29 @@ public class OrganizersDAO {
 		try (Connection con = DBUtil.getConnection();
 			PreparedStatement ps = con.prepareStatement(sql)){
 
-			ps.executeQuery();
+			ps.setString(1, name);
+			ps.setString(2, pass);
 
+			ResultSet rs =  ps.executeQuery();
+
+			if(rs.next()){
+				String id = String.valueOf(rs.getInt("id"));
+				String dbName = rs.getString("name");
+				String dbPass = rs.getString("pass");
+				String tellNum = String.valueOf(rs.getInt("tell_num"));
+
+				return new Organizer(id, dbName, dbPass, tellNum);
+			}
 		}
 
-
-		//このメソッドに関しては！！！
-			//まだ作ってる途中！！！！
-
-
-
-
+		return null;
 
 	}
+	
+	
+	
+	public void logout() {
+		
+	}
+	
 }

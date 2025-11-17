@@ -6,7 +6,7 @@
     <a href="test.jsp">→ test.jsp を開く</a>
 
 
-    <p><a href="register_organizer.jsp">新規登録はこちらから</a></p>
-    <p><a href="login_organizer.jsp">ログインはこちらから</a></p>
+    <p><a href="auth/registerOrganizer">新規登録はこちらから</a></p>
+    <p><a href="auth/loginOrganizer">ログインはこちらから</a></p>
   </body>
 </html>

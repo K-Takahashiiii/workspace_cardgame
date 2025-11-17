@@ -1,9 +1,7 @@
 package servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,9 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import util.DBUtil;
+import bean.Organizer;
+import dao.OrganizersDAO;
 
-@WebServlet("/loginOrganizer")
+@WebServlet("/auth/loginOrganizer")
 public class LoginOrganizerServlet extends HttpServlet {
 
     @Override
@@ -25,7 +24,7 @@ public class LoginOrganizerServlet extends HttpServlet {
 
         // GETで来たらログイン画面に飛ばすだけ
         RequestDispatcher rd =
-                request.getRequestDispatcher("/login_organizer.jsp");
+                request.getRequestDispatcher("/auth/login_organizer.jsp");
         rd.forward(request, response);
     }
 
@@ -49,58 +48,38 @@ public class LoginOrganizerServlet extends HttpServlet {
 
             request.setAttribute("error", error);
             RequestDispatcher rd =
-                    request.getRequestDispatcher("/login_organizer.jsp");
+                    request.getRequestDispatcher("/auth/login_organizer.jsp");
             rd.forward(request, response);
             return;
         }
 
-        // DBで照合
-        String sql = "SELECT id, name, pass, tell_num "
-                   + "FROM organizers "
-                   + "WHERE name = ? AND pass = ?";
+        try {
+        	OrganizersDAO dao = new OrganizersDAO();
+        	Organizer organizer = dao.loginCheck(name, pass);
 
-        try (Connection con = DBUtil.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        	if(organizer != null){
+        		//ログイン成功、セッションに情報をいれる
+        		HttpSession session = request.getSession();
+        		session.setAttribute("loginOrganizer", organizer);
 
-            ps.setString(1, name);
-            ps.setString(2, pass);
+        		//ログイン成功画面へ遷移
+        		RequestDispatcher rd = request.getRequestDispatcher("/auth/login_organizer_success.jsp");
+            	rd.forward(request, response);
+            	return;
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    // ログイン成功
-                    int id = rs.getInt("id");
-                    int tellNum = rs.getInt("tell_num");
+        	}
 
-                    // セッションにログイン情報を保存しておく
-                    HttpSession session = request.getSession();
-                    session.setAttribute("loginOrganizerId", id);
-                    session.setAttribute("loginOrganizerName", name);
-                    session.setAttribute("loginOrganizerTellNum", tellNum);
+        } catch (SQLException e) {
 
-                    // 成功画面へ
-                    RequestDispatcher rd =
-                            request.getRequestDispatcher("/login_organizer_success.jsp");
-                    rd.forward(request, response);
-                    return;
+        	e.printStackTrace();
+        	request.setAttribute("error", "ログイン処理中にエラーが発生しました");
+        	RequestDispatcher rd = request.getRequestDispatcher("/auth/login_organizer.jsp");
+        	rd.forward(request, response);
+        	return;
 
-                } else {
-                    // ログイン失敗
-                    error = "名前またはパスワードが違います";
-                    request.setAttribute("error", error);
-                    RequestDispatcher rd =
-                            request.getRequestDispatcher("/login_organizer.jsp");
-                    rd.forward(request, response);
-                    return;
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            error = "ログイン処理中にエラーが発生しました";
-            request.setAttribute("error", error);
-            RequestDispatcher rd =
-                    request.getRequestDispatcher("/login_organizer.jsp");
-            rd.forward(request, response);
         }
+
+
+
     }
 }

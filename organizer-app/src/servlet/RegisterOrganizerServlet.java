@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import dao.OrganizersDAO;
 
-@WebServlet("/registerOrganizer")
+@WebServlet("/auth/registerOrganizer")
 public class RegisterOrganizerServlet extends HttpServlet {
 
     @Override
@@ -21,7 +21,7 @@ public class RegisterOrganizerServlet extends HttpServlet {
             throws ServletException, IOException {
         // GETで来たときはフォームに飛ばすだけ
         RequestDispatcher rd =
-                request.getRequestDispatcher("/register_organizer.jsp");
+                request.getRequestDispatcher("/auth/register_organizer.jsp");
         rd.forward(request, response);
     }
 
@@ -59,7 +59,7 @@ public class RegisterOrganizerServlet extends HttpServlet {
         if (error != null) {
             request.setAttribute("error", error);
             RequestDispatcher rd =
-                    request.getRequestDispatcher("/register_organizer.jsp");
+                    request.getRequestDispatcher("/auth/register_organizer.jsp");
             rd.forward(request, response);
             return;
         }
@@ -74,7 +74,7 @@ public class RegisterOrganizerServlet extends HttpServlet {
             //完了画面へ遷移
             request.setAttribute("name", name);
             RequestDispatcher rd =
-                    request.getRequestDispatcher("/register_organizer_done.jsp");
+                    request.getRequestDispatcher("/auth/register_organizer_done.jsp");
             rd.forward(request, response);
             return;
 
@@ -86,7 +86,7 @@ public class RegisterOrganizerServlet extends HttpServlet {
             request.setAttribute("error", error);
 
             RequestDispatcher rd =
-                    request.getRequestDispatcher("/register_organizer.jsp");
+                    request.getRequestDispatcher("/auth/register_organizer.jsp");
             rd.forward(request, response);
             return;
         }
