@@ -6,5 +6,9 @@
 
     <p><a href="registerOrganizer">新規登録はこちらから</a></p>
     <p><a href="loginOrganizer">ログインはこちらから</a></p>
+
+    <form action="logoutOrganizer" method="get">
+		<button type="submit">ログアウト</button>
+	</form>
   </body>
 </html>
