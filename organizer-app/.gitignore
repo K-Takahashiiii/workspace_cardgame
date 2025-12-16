@@ -1,1 +1,8 @@
-/build/
+# Eclipse
+.classpath
+.project
+.settings/
+
+# WTP (Dynamic Web Project)
+Servers/
+org.eclipse.wst.common.project.facet.core.xml
