@@ -1,59 +1,58 @@
 package bean;
 
-	//beanのクラスはすべてこの型に従って作ってください！！！！！！！
-
 import java.io.Serializable;
 
 public class Organizer implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
-    private String	 id;
+    private int managementNum;
+    private String storeName;
+    private String representativeName;
+    private String password;
     private String name;
-    private String pass;
-    private String tellNum;
 
-    // 引数なしコンストラクタ（JavaBeanの基本）
-    public Organizer() {
-    }
+    public Organizer() {}
 
-    // 全部入りコンストラクタ（便利なので残してOK）
-    public Organizer(String id, String name, String pass, String tellNum) {
-        this.id = id;
+    public Organizer(int managementNum, String storeName, String representativeName, String password, String name) {
+        this.managementNum = managementNum;
+        this.storeName = storeName;
+        this.representativeName = representativeName;
+        this.password = password;
         this.name = name;
-        this.pass = pass;
-        this.tellNum = tellNum;
     }
 
-	public String getId() {
-		return id;
-	}
+    public int getManagementNum() {
+        return managementNum;
+    }
+    public void setManagementNum(int managementNum) {
+        this.managementNum = managementNum;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getStoreName() {
+        return storeName;
+    }
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getRepresentativeName() {
+        return representativeName;
+    }
+    public void setRepresentativeName(String representativeName) {
+        this.representativeName = representativeName;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public String getPass() {
-		return pass;
-	}
-
-	public void setPass(String pass) {
-		this.pass = pass;
-	}
-
-	public String getTellNum() {
-		return tellNum;
-	}
-
-	public void setTellNum(String tellNum) {
-		this.tellNum = tellNum;
-	}
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 }

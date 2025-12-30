@@ -12,7 +12,7 @@
     <p>ログアウトしました。</p>
 
     <p>
-        <a href="menu">トップへ戻る</a>
+        <a href="<%= request.getContextPath() %>/menu">トップへ戻る</a>
     </p>
 </body>
 </html>

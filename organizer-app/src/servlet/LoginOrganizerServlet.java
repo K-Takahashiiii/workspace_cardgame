@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import bean.Organizer;
 import dao.OrganizersDAO;
 
-@WebServlet("/auth/loginOrganizer")
+@WebServlet({"/loginOrganizer", "/auth/loginOrganizer"})
 public class LoginOrganizerServlet extends HttpServlet {
 
     @Override
@@ -35,17 +35,25 @@ public class LoginOrganizerServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        String name = request.getParameter("name");
-        String pass = request.getParameter("pass");
+        String management_num = request.getParameter("management_num");
+        String pass = request.getParameter("password");
 
         String error = null;
+        int managementNum = 0;
 
         // 簡単な入力チェック
-        if (name == null || name.isEmpty()
-                || pass == null || pass.isEmpty()) {
+        if (isEmpty(management_num) || isEmpty(pass)) {
+            error = "管理番号とパスワードを入力してください";
+        } else {
+            // 空欄じゃないときだけ数値変換
+            try {
+                managementNum = Integer.parseInt(management_num);
+            } catch (NumberFormatException e) {
+                error = "管理番号は数字で入力してください";
+            }
+        }
 
-            error = "名前とパスワードを入力してください";
-
+        if (error != null){
             request.setAttribute("error", error);
             RequestDispatcher rd =
                     request.getRequestDispatcher("/auth/login_organizer.jsp");
@@ -55,7 +63,7 @@ public class LoginOrganizerServlet extends HttpServlet {
 
         try {
         	OrganizersDAO dao = new OrganizersDAO();
-        	Organizer organizer = dao.loginCheck(name, pass);
+        	Organizer organizer = dao.loginCheck(managementNum, pass);
 
         	if(organizer != null){
         		//ログイン成功、セッションに情報をいれる
@@ -67,7 +75,14 @@ public class LoginOrganizerServlet extends HttpServlet {
             	rd.forward(request, response);
             	return;
 
-        	}
+        	} else {
+                // 4) ログイン失敗時の戻し
+                request.setAttribute("error", "管理番号またはパスワードが違います");
+                RequestDispatcher rd =
+                        request.getRequestDispatcher("/auth/login_organizer.jsp");
+                rd.forward(request, response);
+                return;
+            }
 
         } catch (SQLException e) {
 
@@ -79,7 +94,10 @@ public class LoginOrganizerServlet extends HttpServlet {
 
         }
 
-
-
     }
+
+    private boolean isEmpty(String s ) {
+        return s == null || s.trim().isEmpty();
+    }
+
 }

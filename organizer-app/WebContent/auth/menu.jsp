@@ -1,14 +1,50 @@
 <!-- WebContent/index.jsp -->
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <html>
-  <body>
-    <h2>Organizer App</h2>
+<body>
+	<%@ page contentType="text/html; charset=UTF-8" language="java"%>
+	<%@ page import="bean.Organizer"%>
 
-    <p><a href="registerOrganizer">新規登録はこちらから</a></p>
-    <p><a href="loginOrganizer">ログインはこちらから</a></p>
+	<%
+		Organizer loginOrganizer = (Organizer) session.getAttribute("loginOrganizer");
+	%>
 
-    <form action="logoutOrganizer" method="get">
+	<%
+		if (loginOrganizer != null) {
+	%>
+	<div style="padding: 8px; border: 1px solid #ccc; margin-bottom: 12px;">
+		ログイン中： 管理番号：<%=loginOrganizer.getManagementNum()%>
+		／ 名前：<%=loginOrganizer.getName()%>
+	</div>
+	<%
+		} else {
+	%>
+	<div style="padding: 8px; border: 1px solid #f99; margin-bottom: 12px;">
+		未ログインです（ログインしてください）</div>
+	<%
+		}
+	%>
+	<h2>Organizer App</h2>
+
+	<p>
+		<a href="<%=request.getContextPath()%>/registerOrganizer">新規登録はこちらから</a>
+	</p>
+	<p>
+		<a href="<%=request.getContextPath()%>/loginOrganizer">ログインはこちらから</a>
+	</p>
+
+	<form action="logoutOrganizer" method="get">
 		<button type="submit">ログアウト</button>
 	</form>
-  </body>
+
+
+
+	ここから大会追加と大会一覧表示と大会の詳細設定を作り込んでいく
+
+
+
+
+
+
+</body>
 </html>

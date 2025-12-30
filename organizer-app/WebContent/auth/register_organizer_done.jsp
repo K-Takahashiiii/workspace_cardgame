@@ -2,20 +2,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>主催者登録 完了</title>
+  <meta charset="UTF-8">
+  <title>主催者 登録完了</title>
 </head>
 <body>
-<h1>主催者登録 完了</h1>
+<h1>主催者 登録完了</h1>
 
-<p><strong><%= request.getAttribute("name") %></strong> さんの登録が完了しました。</p>
+<%
+  Integer managementNum = (Integer) request.getAttribute("management_num");
+  String name = (String) request.getAttribute("name");
+%>
+
+<p><strong><%= name %></strong> さんの登録が完了しました。</p>
+<p>あなたの管理番号（ログインID）は：<strong><%= managementNum %></strong></p>
 
 <p>
-	<a href="registerOrganizer">もう一度登録する</a><br>
-	<a href="menu">トップへ戻る</a>
-
+  <a href="<%= request.getContextPath() %>/registerOrganizer">もう一度登録する</a><br>
+  <a href="<%= request.getContextPath() %>/loginOrganizer">ログインへ</a>
 </p>
-
 
 </body>
 </html>

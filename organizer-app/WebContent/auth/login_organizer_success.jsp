@@ -11,21 +11,25 @@
 
 <%
     Organizer organizer = (Organizer) session.getAttribute("loginOrganizer");
-    String name = null;
-    if (organizer != null) {
-        name = organizer.getName();
-    }
+    String name = (organizer != null) ? organizer.getName() : null;
 %>
 
-<p><strong><%= name != null ? name : "（不明）" %></strong> さん、ログインしました。</p>
+<p><strong><%= (name != null) ? name : "（不明）" %></strong> さん、ログインしました。</p>
 
 <p>
-    新規登録画面に戻る → <a href="auth_templates/registerOrganizer">主催者 新規登録</a><br>
-    ログイン画面に戻る → <a href="auth_templates/loginOrganizer">主催者 ログイン</a><br>
-    <form action="logoutOrganizer" method="get">
-		<button type="submit">ログアウト</button>
-	</form>
-	<br><a href="menu">トップへ戻る</a>
+    新規登録画面に戻る →
+    <a href="<%= request.getContextPath() %>/registerOrganizer">主催者 新規登録</a><br>
+
+    ログイン画面に戻る →
+    <a href="<%= request.getContextPath() %>/loginOrganizer">主催者 ログイン</a><br>
+</p>
+
+<form action="<%= request.getContextPath() %>/logoutOrganizer" method="get">
+    <button type="submit">ログアウト</button>
+</form>
+
+<p>
+    <a href="<%= request.getContextPath() %>/menu">トップへ戻る</a>
 </p>
 
 </body>

@@ -10,9 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import bean.Organizer;
 import dao.OrganizersDAO;
 
-@WebServlet("/auth/registerOrganizer")
+@WebServlet({"/registerOrganizer", "/auth/registerOrganizer"})
 public class RegisterOrganizerServlet extends HttpServlet {
 
     @Override
@@ -33,48 +34,41 @@ public class RegisterOrganizerServlet extends HttpServlet {
     	// 1) 文字コード
         request.setCharacterEncoding("UTF-8");
 
+        String storeName = request.getParameter("store_name");
+        String repName = request.getParameter("representative_name");
+        String password = request.getParameter("password");
         String name = request.getParameter("name");
-        String pass = request.getParameter("pass");
-        String tellNumStr = request.getParameter("tell_num");
 
         String error = null;
-        int tellNum = 0;
 
-     // 3) 入力チェック（null / 空文字 / 数値チェック）
-        if (name == null || name.isEmpty()
-                || pass == null || pass.isEmpty()
-                || tellNumStr == null || tellNumStr.isEmpty()) {
-
+     // 3) 入力チェック（null / 空文字）
+        if (isEmpty(storeName) || isEmpty(repName) || isEmpty(password) || isEmpty(name)) {
             error = "すべての項目を入力してください";
 
-        } else {
-            try {
-                tellNum = Integer.parseInt(tellNumStr);
-            } catch (NumberFormatException e) {
-                error = "電話番号は数字で入力してください";
-            }
-        }
-
-     // 4) エラーあったらフォームに戻す（エラーメッセージ付き）
-        if (error != null) {
             request.setAttribute("error", error);
-            RequestDispatcher rd =
-                    request.getRequestDispatcher("/auth/register_organizer.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/auth/register_organizer.jsp");
             rd.forward(request, response);
             return;
         }
 
      // 5) エラーなければ DAO 経由で INSERT
+
+        Organizer organizer = new Organizer();
+        organizer.setStoreName(storeName);
+        organizer.setRepresentativeName(repName);
+        organizer.setPassword(password);
+        organizer.setName(name);
+
         try {
             // ★ DAOを使ってINSERT
             OrganizersDAO dao = new OrganizersDAO();
-            dao.insertOrganizers(name, pass, tellNum);
+            int managementNum = dao.insertOrganizer(organizer);
 
             // ★ ここまで来たら「INSERT成功」
             //完了画面へ遷移
+            request.setAttribute("management_num", managementNum);
             request.setAttribute("name", name);
-            RequestDispatcher rd =
-                    request.getRequestDispatcher("/auth/register_organizer_done.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/auth/register_organizer_done.jsp");
             rd.forward(request, response);
             return;
 
@@ -88,7 +82,11 @@ public class RegisterOrganizerServlet extends HttpServlet {
             RequestDispatcher rd =
                     request.getRequestDispatcher("/auth/register_organizer.jsp");
             rd.forward(request, response);
-            return;
         }
     }
+
+    private boolean isEmpty(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
 }

@@ -17,23 +17,24 @@
     }
 %>
 
-<form action="loginOrganizer" method="post">
+<form action="<%= request.getContextPath() %>/loginOrganizer" method="post">
     <div>
-        <label>名前(name)：</label>
-        <input type="text" name="name">
+        <label>管理番号(management_num)：</label>
+        <input type="text" name="management_num">
     </div>
+
     <div>
-        <label>パスワード(pass)：</label>
-        <input type="password" name="pass">
+        <label>パスワード(password)：</label>
+        <input type="password" name="password">
     </div>
+
     <div>
         <button type="submit">ログイン</button>
     </div>
 </form>
 
 <p>
-    新規登録は <a href="registerOrganizer">こちら</a><br>
-    <a href="menu">トップへ戻る</a>
+    <a href="<%= request.getContextPath() %>/registerOrganizer">新規登録はこちら</a>
 </p>
 
 </body>

@@ -1,9 +1,11 @@
 package dao;
 
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import bean.Organizer;
 import util.DBUtil;
@@ -15,73 +17,66 @@ public class OrganizersDAO {
 
 	//データをRegisterOrganizerServlet.javaから受け取って、
 	//organizerテーブルに追加するメソッド
-	public void insertOrganizers(
-			String name, String pass, int tellNum
-	) throws SQLException{
+	// 新規登録：登録して、採番された management_num を返す
+    public int insertOrganizer(
+    		Organizer organizer
+    ) throws SQLException {
 
-		//SQL文設定
-		//try文で次の処理を実行
-		//データベースに接続(conとしてDButil.getConnection()をインスタンス化)
-		//SQL文をcon.prepareStatement()に渡してpsとしてインスタンス化
-		//各値をps.serString()等のメソッドでで設定する
-		//ps.executeUpdate()でSQL文の実行
-		//try文から抜けてホーム画面のリンクにフォワード
-		//例外が発生したらcatchでエラーが発生したら、
-		//"エラーが発生しました"error変数の値をrequestに
-		//持たせて新規登録のjspにフォワード
+        String sql =
+            "INSERT INTO organizers (store_name, representative_name, password, name) " +
+            "VALUES (?, ?, ?, ?)";
 
-		String sql = "insert into organizers(name, pass, tell_num)"
-				 + ( "values(?, ?, ?)");
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-		try(Connection con =  DBUtil.getConnection();
-			PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setString(1, organizer.getStoreName());
+            ps.setString(2, organizer.getRepresentativeName());
+            ps.setString(3, organizer.getPassword());
+            ps.setString(4, organizer.getName());
 
-			ps.setString(1, name);
-			ps.setString(2, pass);
-			ps.setInt(3, tellNum);
+            ps.executeUpdate();
 
-			ps.executeUpdate();
-
-		}//例外が起きるとエラーを呼び出し元(RegisterOrganizerServlet)に投げる
-	}
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // management_num
+                }
+            }
+        }
+        throw new SQLException("management_num の採番取得に失敗しました");
+    }
 
 
 	//LoginOrganizerから情報をもらってテーブルにアカウントが
 	//存在するか調べてセッションに登録して返すメソッド
 	public Organizer loginCheck(
-			String name, String pass
+			int managementNum, String password
 	) throws SQLException{
 
-		String sql = "SELECT id, name, pass, tell_num "
-				+ "FROM organizers "
-				+ "WHERE name = ? AND pass = ?";
+		String sql = "SELECT management_num, store_name, representative_name, password, name " +
+	            "FROM organizers " +
+	            "WHERE management_num = ? AND password = ?";
 
 		try (Connection con = DBUtil.getConnection();
 			PreparedStatement ps = con.prepareStatement(sql)){
 
-			ps.setString(1, name);
-			ps.setString(2, pass);
+			ps.setInt(1, managementNum);
+            ps.setString(2, password);
 
-			ResultSet rs =  ps.executeQuery();
-
-			if(rs.next()){
-				String id = String.valueOf(rs.getInt("id"));
-				String dbName = rs.getString("name");
-				String dbPass = rs.getString("pass");
-				String tellNum = String.valueOf(rs.getInt("tell_num"));
-
-				return new Organizer(id, dbName, dbPass, tellNum);
-			}
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Organizer o = new Organizer();
+                    o.setManagementNum(rs.getInt("management_num"));
+                    o.setStoreName(rs.getString("store_name"));
+                    o.setRepresentativeName(rs.getString("representative_name"));
+                    o.setPassword(rs.getString("password"));
+                    o.setName(rs.getString("name"));
+                    return o;
+                }
+            }
 		}
 
 		return null;
 
 	}
-	
-	
-	
-	public void logout() {
-		
-	}
-	
+
 }

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/auth/menu")
+@WebServlet({"/menu", "/auth/menu"})
 public class MenuOrganizerServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
