@@ -39,7 +39,10 @@
 
 
 
-	ここから大会追加と大会一覧表示と大会の詳細設定を作り込んでいく
+	<p>
+		<a href="<%=request.getContextPath()%>/registerTournament">大会登録（新規作成）</a>
+	</p>
+
 
 
 
