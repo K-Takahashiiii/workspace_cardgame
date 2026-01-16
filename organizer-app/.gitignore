@@ -7,3 +7,7 @@
 Servers/
 org.eclipse.wst.common.project.facet.core.xml
 /bin/
+
+/organizer-app/bin/
+/organizer-app/build/
+/organizer-app/.settings/

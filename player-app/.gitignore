@@ -7,3 +7,7 @@
 Servers/
 org.eclipse.wst.common.project.facet.core.xml
 /bin/
+
+/player-app/bin/
+/player-app/build/
+/player-app/.settings/
