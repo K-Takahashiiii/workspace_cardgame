@@ -15,7 +15,7 @@ public class DBUtil {
 
     // 宮っさんのメインPC（共有DB）
     private static final String REMOTE_URL  =
-        "jdbc:mysql://10.251.197.147:3306/card_app" + PARAMS;
+        "jdbc:mysql://10.251.197.147:3306/tournament_app" + PARAMS;
     private static final String REMOTE_USER = "card_team";
     private static final String REMOTE_PASS = "rootpass";
 
