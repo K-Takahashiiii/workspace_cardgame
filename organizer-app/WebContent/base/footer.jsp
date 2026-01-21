@@ -19,4 +19,6 @@
   <% } %>
 
   <!-- ここに必要に応じてリンクを追加 -->
+  <a href="<%= request.getContextPath() %>/tournament/list">大会一覧</a>
+
 </footer>
