@@ -7,7 +7,13 @@
 <title>主催者アプリ</title>
 </head>
 <body>
+
+    <jsp:include page="/base/header.jsp" />
+
 	<h1>サーバー経由実行成功</h1>
 	<h1>変更2</h1>
+
+
+    <jsp:include page="/base/footer.jsp" />
 </body>
 </html>

@@ -8,6 +8,9 @@
 </head>
 <body>
 
+    <jsp:include page="/base/header.jsp" />
+
+
 <h1>大会登録</h1>
 
 <%
@@ -75,5 +78,8 @@
     <a href="<%= request.getContextPath() %>/menu">メニューへ戻る</a>
 </p>
 
+
+
+    <jsp:include page="/base/footer.jsp" />
 </body>
 </html>

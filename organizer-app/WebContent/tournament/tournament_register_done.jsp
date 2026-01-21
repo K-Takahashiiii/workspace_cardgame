@@ -7,6 +7,12 @@
 <title>登録完了</title>
 </head>
 <body>
+
+    <jsp:include page="/base/header.jsp" />
+
 	大会の登録が完了しました
+
+
+    <jsp:include page="/base/footer.jsp" />
 </body>
 </html>

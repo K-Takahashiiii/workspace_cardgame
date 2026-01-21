@@ -6,6 +6,9 @@
   <title>主催者 新規登録</title>
 </head>
 <body>
+
+    <jsp:include page="/base/header.jsp" />
+
 <h1>主催者 新規登録</h1>
 
 <%
@@ -39,5 +42,8 @@
   </div>
 </form>
 
+
+
+    <jsp:include page="/base/footer.jsp" />
 </body>
 </html>

@@ -7,6 +7,9 @@
     <title>主催者 ログイン成功</title>
 </head>
 <body>
+
+    <jsp:include page="/base/header.jsp" />
+
 <h1>主催者 ログイン成功</h1>
 
 <%
@@ -32,5 +35,8 @@
     <a href="<%= request.getContextPath() %>/menu">トップへ戻る</a>
 </p>
 
+
+
+    <jsp:include page="/base/footer.jsp" />
 </body>
 </html>

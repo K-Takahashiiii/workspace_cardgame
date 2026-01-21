@@ -6,6 +6,9 @@
   <title>主催者 登録完了</title>
 </head>
 <body>
+
+    <jsp:include page="/base/header.jsp" />
+
 <h1>主催者 登録完了</h1>
 
 <%
@@ -21,5 +24,8 @@
   <a href="<%= request.getContextPath() %>/loginOrganizer">ログインへ</a>
 </p>
 
+
+
+    <jsp:include page="/base/footer.jsp" />
 </body>
 </html>

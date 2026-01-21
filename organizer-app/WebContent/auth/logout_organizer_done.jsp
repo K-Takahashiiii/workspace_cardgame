@@ -7,6 +7,9 @@
 <title>主催者 ログアウト完了</title>
 </head>
 <body>
+
+    <jsp:include page="/base/header.jsp" />
+
     <h1>主催者 ログアウト</h1>
 
     <p>ログアウトしました。</p>
@@ -14,5 +17,8 @@
     <p>
         <a href="<%= request.getContextPath() %>/menu">トップへ戻る</a>
     </p>
+
+
+    <jsp:include page="/base/footer.jsp" />
 </body>
 </html>
