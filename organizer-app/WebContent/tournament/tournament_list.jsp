@@ -28,7 +28,6 @@
   <h1>大会一覧</h1>
 
   <%
-    // エラーメッセージ
     String error = (String) request.getAttribute("error");
     if (error != null) {
   %>
@@ -36,11 +35,9 @@
   <%
     }
 
-    // 一覧データ
     @SuppressWarnings("unchecked")
     List<Tournament> tournaments = (List<Tournament>) request.getAttribute("tournaments");
 
-    // 日付/時刻フォーマット
     DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd");
     DateTimeFormatter tf = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -68,6 +65,7 @@
           <th>開始時刻</th>
           <th>参加</th>
           <th>状態</th>
+          <th>設定</th>
         </tr>
 
         <%
@@ -82,6 +80,9 @@
               <td><%= timeStr %></td>
               <td><%= t.getCurrentParticipants() %> / <%= t.getMaxParticipants() %></td>
               <td><%= statusLabel(t.getStatus()) %></td>
+              <td>
+                <a href="<%= ctx %>/optioningTournament?tournamentId=<%= t.getTournamentId() %>">詳細設定</a>
+              </td>
             </tr>
         <%
           }

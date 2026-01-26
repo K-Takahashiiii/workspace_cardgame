@@ -13,13 +13,11 @@
 
     <p>
         <a href="<%= request.getContextPath() %>/registerTournament">大会登録（新規作成）</a>
-        <a href="<%= request.getContextPath() %>/optioningTournament">大会詳細設定</a>
+        &nbsp;|&nbsp;
+        <a href="<%= request.getContextPath() %>/tournament/list">大会一覧</a>
     </p>
 
     <!-- 必要に応じてリンクを追加 -->
-
-
-
 
     <jsp:include page="/base/footer.jsp" />
 

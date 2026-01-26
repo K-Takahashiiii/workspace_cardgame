@@ -54,8 +54,7 @@ public class RegisterTournamentServlet extends HttpServlet {
             return;
         }
 
-        // ② フォーム入力を受け取る
-        // 互換対応：camelCase / snake_case どっちでも取れるようにする
+        // ② フォーム入力を受け取る（互換対応：camelCase / snake_case）
         String name = param(request, "name");
 
         String eventDateStr = param(request, "eventDate", "event_date");
@@ -65,12 +64,12 @@ public class RegisterTournamentServlet extends HttpServlet {
         String description = param(request, "description");
         String statusStr = param(request, "status");
 
-        // 追加フィールド（任意が多い想定）
+        // 追加フィールド（大会詳細）
         String venue = param(request, "venue");
         String gameTitle = param(request, "gameTitle", "game_title");
         String tournamentFormat = param(request, "tournamentFormat", "tournament_format");
         String entryFeeYenStr = param(request, "entryFeeYen", "entry_fee_yen");
-        String registrationDeadlineStr = param(request, "registrationDeadline", "registration_deadline"); // datetime-local想定(yyyy-MM-ddTHH:mm)
+        String registrationDeadlineStr = param(request, "registrationDeadline", "registration_deadline"); // datetime-local: yyyy-MM-ddTHH:mm
         String matchFormat = param(request, "matchFormat", "match_format");
         String timeLimitMinutesStr = param(request, "timeLimitMinutes", "time_limit_minutes");
         String drawRule = param(request, "drawRule", "draw_rule");
@@ -78,9 +77,12 @@ public class RegisterTournamentServlet extends HttpServlet {
         String prizeSecond = param(request, "prizeSecond", "prize_second");
         String prizeThird = param(request, "prizeThird", "prize_third");
 
+        // 今回追加（単数）：参加条件コード
+        String entryRequirementStr = param(request, "entryRequirement", "entry_requirement");
+
         String error = null;
 
-        // ③ 必須チェック（必要最低限だけ必須にする）
+        // ③ 必須チェック
         if (isEmpty(name) || isEmpty(eventDateStr) || isEmpty(maxStr) || isEmpty(statusStr)) {
             error = "必須項目を入力してください";
         }
@@ -91,9 +93,11 @@ public class RegisterTournamentServlet extends HttpServlet {
         int maxParticipants = 0;
         int status = 0;
 
-        int entryFeeYen = 0;         // 任意：未入力なら0扱い
+        int entryFeeYen = 0;                  // 任意：未入力なら0
         LocalDateTime registrationDeadline = null; // 任意
-        int timeLimitMinutes = 0;     // 任意：未入力なら0扱い
+        int timeLimitMinutes = 0;             // 任意：未入力なら0
+
+        int entryRequirement = 0;             // 任意：未入力なら0（条件なし運用）
 
         if (error == null) {
             try {
@@ -103,22 +107,18 @@ public class RegisterTournamentServlet extends HttpServlet {
             }
         }
 
-        if (error == null) {
-            if (!isEmpty(eventTimeStr)) {
-                try {
-                    eventTime = LocalTime.parse(eventTimeStr); // HH:mm
-                } catch (Exception e) {
-                    error = "開催時刻が不正です";
-                }
+        if (error == null && !isEmpty(eventTimeStr)) {
+            try {
+                eventTime = LocalTime.parse(eventTimeStr); // HH:mm
+            } catch (Exception e) {
+                error = "開催時刻が不正です";
             }
         }
 
         if (error == null) {
             try {
                 maxParticipants = Integer.parseInt(maxStr);
-                if (maxParticipants <= 0) {
-                    error = "最大参加人数は1以上にしてください";
-                }
+                if (maxParticipants <= 0) error = "最大参加人数は1以上にしてください";
             } catch (NumberFormatException e) {
                 error = "最大参加人数は数字で入力してください";
             }
@@ -132,31 +132,27 @@ public class RegisterTournamentServlet extends HttpServlet {
             }
         }
 
-        // 任意項目：参加費(円)
+        // 任意：参加費(円)
         if (error == null && !isEmpty(entryFeeYenStr)) {
             try {
                 entryFeeYen = Integer.parseInt(entryFeeYenStr);
-                if (entryFeeYen < 0) {
-                    error = "参加費は0以上にしてください";
-                }
+                if (entryFeeYen < 0) error = "参加費は0以上にしてください";
             } catch (NumberFormatException e) {
                 error = "参加費は数字で入力してください";
             }
         }
 
-        // 任意項目：制限時間(分)
+        // 任意：制限時間(分)
         if (error == null && !isEmpty(timeLimitMinutesStr)) {
             try {
                 timeLimitMinutes = Integer.parseInt(timeLimitMinutesStr);
-                if (timeLimitMinutes < 0) {
-                    error = "制限時間は0以上にしてください";
-                }
+                if (timeLimitMinutes < 0) error = "制限時間は0以上にしてください";
             } catch (NumberFormatException e) {
                 error = "制限時間は数字で入力してください";
             }
         }
 
-        // 任意項目：登録締め切り（datetime-localなら "yyyy-MM-ddTHH:mm" で入る）
+        // 任意：登録締め切り（datetime-local: yyyy-MM-ddTHH:mm）
         if (error == null && !isEmpty(registrationDeadlineStr)) {
             try {
                 registrationDeadline = LocalDateTime.parse(registrationDeadlineStr);
@@ -165,11 +161,20 @@ public class RegisterTournamentServlet extends HttpServlet {
             }
         }
 
-        // ⑤ エラーがあればフォームに戻す（入力保持用に request.setAttribute も載せる）
+        // 任意：参加条件コード（0以上）
+        if (error == null && !isEmpty(entryRequirementStr)) {
+            try {
+                entryRequirement = Integer.parseInt(entryRequirementStr);
+                if (entryRequirement < 0) error = "参加条件コードは0以上にしてください";
+            } catch (NumberFormatException e) {
+                error = "参加条件コードは数字で入力してください";
+            }
+        }
+
+        // ⑤ エラーがあればフォームに戻す（入力保持）
         if (error != null) {
             request.setAttribute("error", error);
 
-            // 入力保持（必要なものだけ）
             request.setAttribute("name", name);
             request.setAttribute("eventDate", eventDateStr);
             request.setAttribute("eventTime", eventTimeStr);
@@ -189,6 +194,8 @@ public class RegisterTournamentServlet extends HttpServlet {
             request.setAttribute("prizeSecond", prizeSecond);
             request.setAttribute("prizeThird", prizeThird);
 
+            request.setAttribute("entryRequirement", entryRequirementStr);
+
             RequestDispatcher rd = request.getRequestDispatcher("/tournament/tournament_register.jsp");
             rd.forward(request, response);
             return;
@@ -198,7 +205,6 @@ public class RegisterTournamentServlet extends HttpServlet {
         Tournament t = new Tournament();
         t.setName(name);
 
-        // Organizer の getter 名はプロジェクトに合わせる（現状のあなたのコードを尊重）
         t.setOrganizerId(loginOrganizer.getManagementNum());
 
         t.setEventDate(eventDate);
@@ -221,13 +227,15 @@ public class RegisterTournamentServlet extends HttpServlet {
         t.setPrizeSecond(prizeSecond);
         t.setPrizeThird(prizeThird);
 
+        // 今回追加（単数）
+        t.setEntryRequirement(entryRequirement);
+
         // ⑦ DAOでINSERT
         try {
             TournamentsDAO dao = new TournamentsDAO();
             dao.insertTournament(t);
 
-            // 登録完了画面へ
-            request.setAttribute("tournament", t); // まとめて渡す（done側で自由に表示できる）
+            request.setAttribute("tournament", t);
             RequestDispatcher rd = request.getRequestDispatcher("/tournament/tournament_register_done.jsp");
             rd.forward(request, response);
             return;
@@ -235,8 +243,6 @@ public class RegisterTournamentServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("error", "登録中にエラーが発生しました");
-
-            // 入力保持（最低限）
             request.setAttribute("tournament", t);
 
             RequestDispatcher rd = request.getRequestDispatcher("/tournament/tournament_register.jsp");
@@ -257,7 +263,6 @@ public class RegisterTournamentServlet extends HttpServlet {
             String v = request.getParameter(k);
             if (!isEmpty(v)) return v;
         }
-        // どれも無い/空なら、最初のキーで取得した結果（null or 空）を返しておく
         return (keys.length >= 1) ? request.getParameter(keys[0]) : null;
     }
 }

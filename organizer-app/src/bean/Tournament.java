@@ -16,17 +16,20 @@ public class Tournament {
     private String description;
 
     // 追加フィールド（大会詳細を統合）
-    private String venue;                 // 会場
-    private String gameTitle;             // 使用ゲーム
-    private String tournamentFormat;      // 形式
-    private int entryFeeYen;              // 参加費(円)
+    private String venue;                       // 会場
+    private String gameTitle;                   // 使用ゲーム
+    private String tournamentFormat;            // 形式
+    private int entryFeeYen;                    // 参加費(円)
     private LocalDateTime registrationDeadline; // 登録締め切り
-    private String matchFormat;           // 試合形式
-    private int timeLimitMinutes;         // 制限時間(分)
-    private String drawRule;              // 引き分け時
-    private String prizeFirst;            // 優勝賞品
-    private String prizeSecond;           // 準優勝賞品
-    private String prizeThird;            // 3位賞品
+    private String matchFormat;                 // 試合形式
+    private int timeLimitMinutes;               // 制限時間(分)
+    private String drawRule;                    // 引き分け時
+    private String prizeFirst;                  // 優勝賞品
+    private String prizeSecond;                 // 準優勝賞品
+    private String prizeThird;                  // 3位賞品
+
+    // 今回追加（単数）
+    private int entryRequirement;               // 参加条件（条件コード） ※0=条件なし運用
 
     private int status; // 0=受付前,1=受付中,2=開催中,3=終了
     private LocalDateTime createdAt;
@@ -56,6 +59,8 @@ public class Tournament {
         String prizeSecond,
         String prizeThird,
 
+        int entryRequirement,
+
         int status,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
@@ -80,6 +85,8 @@ public class Tournament {
         this.prizeFirst = prizeFirst;
         this.prizeSecond = prizeSecond;
         this.prizeThird = prizeThird;
+
+        this.entryRequirement = entryRequirement;
 
         this.status = status;
         this.createdAt = createdAt;
@@ -238,6 +245,15 @@ public class Tournament {
 
     public void setPrizeThird(String prizeThird) {
         this.prizeThird = prizeThird;
+    }
+
+    // 今回追加（単数）
+    public int getEntryRequirement() {
+        return entryRequirement;
+    }
+
+    public void setEntryRequirement(int entryRequirement) {
+        this.entryRequirement = entryRequirement;
     }
 
     // ---- 既存フィールド ----

@@ -10,6 +10,12 @@
 <footer>
   <a href="<%= ctx %>/menu">メニュー</a>
 
+  &nbsp;|&nbsp;
+  <a href="<%= ctx %>/tournament/list">大会一覧</a>
+
+  &nbsp;|&nbsp;
+  <a href="<%= ctx %>/registerTournament">大会登録</a>
+
   <% if (organizer != null) { %>
     &nbsp;|&nbsp;
     <a href="<%= ctx %>/logoutOrganizer">ログアウト</a>
@@ -17,8 +23,4 @@
     &nbsp;|&nbsp;
     <a href="<%= ctx %>/loginOrganizer">ログイン</a>
   <% } %>
-
-  <!-- ここに必要に応じてリンクを追加 -->
-  <a href="<%= request.getContextPath() %>/tournament/list">大会一覧</a>
-
 </footer>
