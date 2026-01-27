@@ -36,13 +36,16 @@ public class DBUtil {
     public static Connection getConnection() throws SQLException {
 
         // ① まずメインPCに接続トライ
-        try {
-            return DriverManager.getConnection(REMOTE_URL, REMOTE_USER, REMOTE_PASS);
-        } catch (SQLException e) {
-            System.err.println("[DBUtil] remote接続失敗 → localに切り替え: " + e.getMessage());
-        }
+//        try {
+//            return DriverManager.getConnection(REMOTE_URL, REMOTE_USER, REMOTE_PASS);
+//        } catch (SQLException e) {
+//            System.err.println("[DBUtil] remote接続失敗 → localに切り替え: " + e.getMessage());
+//        }
 
-        // ② ダメだったら localhost に接続トライ
+
+
+
         return DriverManager.getConnection(LOCAL_URL, LOCAL_USER, LOCAL_PASS);
+
     }
 }
