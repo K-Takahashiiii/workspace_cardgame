@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import bean.Organizer;
+import bean.Player;
 
 @WebServlet({"/menu", "/auth/menu"})
-public class MenuOrganizerServlet extends HttpServlet {
+public class MenuPlayerServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,12 +23,12 @@ public class MenuOrganizerServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-        Organizer loginOrganizer =
-                (session == null) ? null : (Organizer) session.getAttribute("loginOrganizer");
+        Player loginPlayer =
+                (session == null) ? null : (Player) session.getAttribute("loginPlayer");
 
-        if (loginOrganizer == null) {
+        if (loginPlayer == null) {
             request.setAttribute("error", "ログインしてください");
-            RequestDispatcher rd = request.getRequestDispatcher("/auth/login_organizer.jsp");
+            RequestDispatcher rd = request.getRequestDispatcher("/auth/login_player.jsp");
             rd.forward(request, response);
             return;
         }
