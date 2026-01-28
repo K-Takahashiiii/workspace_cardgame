@@ -74,6 +74,11 @@
   </p>
 
   <p>
+    現在参加者数：<br>
+    <strong><%= t.getParticipantCount() %></strong> / <%= t.getMaxParticipants() %>
+  </p>
+
+  <p>
     大会概要：<br>
     <textarea name="description" rows="5" cols="60"><%= t.getDescription() == null ? "" : t.getDescription() %></textarea>
   </p>

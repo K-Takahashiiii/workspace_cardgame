@@ -56,7 +56,7 @@ public class OptioningTournamentServlet extends HttpServlet {
                 return;
             }
 
-            // 自分の大会かチェック（Organizer側のID getterに合わせる）
+            // 自分の大会かチェック
             if (t.getOrganizerId() != loginOrganizer.getManagementNum()) {
                 response.sendRedirect(request.getContextPath() + "/tournament/list");
                 return;
@@ -227,6 +227,20 @@ public class OptioningTournamentServlet extends HttpServlet {
         t.setPrizeThird(prizeThird);
 
         t.setEntryRequirement(entryRequirement);
+
+        // ★追加：エラー時に戻す表示のため、参加者数だけ再取得して詰める
+        // （DBにある「本当の人数」を表示できる）
+        if (tournamentId != 0) {
+            try {
+                TournamentsDAO dao = new TournamentsDAO();
+                Tournament current = dao.findByTournamentId(tournamentId);
+                if (current != null) {
+                    t.setParticipantCount(current.getParticipantCount());
+                }
+            } catch (SQLException ignore) {
+                // 表示用なので失敗しても更新処理自体は止めない
+            }
+        }
 
         if (error != null) {
             request.setAttribute("error", error);

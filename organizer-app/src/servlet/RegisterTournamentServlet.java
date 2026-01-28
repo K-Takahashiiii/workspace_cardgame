@@ -93,11 +93,11 @@ public class RegisterTournamentServlet extends HttpServlet {
         int maxParticipants = 0;
         int status = 0;
 
-        int entryFeeYen = 0;                  // 任意：未入力なら0
+        int entryFeeYen = 0;                       // 任意：未入力なら0
         LocalDateTime registrationDeadline = null; // 任意
-        int timeLimitMinutes = 0;             // 任意：未入力なら0
+        int timeLimitMinutes = 0;                  // 任意：未入力なら0
 
-        int entryRequirement = 0;             // 任意：未入力なら0（条件なし運用）
+        int entryRequirement = 0;                  // 任意：未入力なら0（条件なし運用）
 
         if (error == null) {
             try {
@@ -210,7 +210,13 @@ public class RegisterTournamentServlet extends HttpServlet {
         t.setEventDate(eventDate);
         t.setEventTime(eventTime);
         t.setMaxParticipants(maxParticipants);
-        t.setCurrentParticipants(0);
+
+        // ★ currentParticipants は廃止したので削除
+        // t.setCurrentParticipants(0);
+
+        // 表示用は明示したいなら0（任意：デフォルトも0）
+        t.setParticipantCount(0);
+
         t.setDescription(description);
         t.setStatus(status);
 

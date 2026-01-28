@@ -78,7 +78,7 @@
               <td><%= t.getName() %></td>
               <td><%= dateStr %></td>
               <td><%= timeStr %></td>
-              <td><%= t.getCurrentParticipants() %> / <%= t.getMaxParticipants() %></td>
+              <td><%= t.getParticipantCount() %> / <%= t.getMaxParticipants() %></td>
               <td><%= statusLabel(t.getStatus()) %></td>
               <td>
                 <a href="<%= ctx %>/optioningTournament?tournamentId=<%= t.getTournamentId() %>">詳細設定</a>

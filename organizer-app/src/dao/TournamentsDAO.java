@@ -21,13 +21,13 @@ public class TournamentsDAO {
 
         String sql = "INSERT INTO tournaments ("
                    + "name, organizer_id, event_date, event_time, "
-                   + "max_participants, current_participants, description, status, "
+                   + "max_participants, description, status, "
                    + "venue, game_title, tournament_format, entry_fee_yen, registration_deadline, "
                    + "match_format, time_limit_minutes, draw_rule, "
                    + "prize_first, prize_second, prize_third, "
                    + "entry_requirement, "
                    + "created_at, updated_at"
-                   + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, "
+                   + ") VALUES (?, ?, ?, ?, ?, ?, ?, "
                    + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
                    + "NOW(), NOW())";
 
@@ -36,22 +36,19 @@ public class TournamentsDAO {
 
             int i = 1;
 
-            // 既存
             ps.setString(i++, tournament.getName());
             ps.setInt(i++, tournament.getOrganizerId());
-            ps.setObject(i++, tournament.getEventDate());     // LocalDate
-            ps.setObject(i++, tournament.getEventTime());     // LocalTime（null可）
+            ps.setObject(i++, tournament.getEventDate());
+            ps.setObject(i++, tournament.getEventTime());
             ps.setInt(i++, tournament.getMaxParticipants());
-            ps.setInt(i++, tournament.getCurrentParticipants());
             ps.setString(i++, tournament.getDescription());
             ps.setInt(i++, tournament.getStatus());
 
-            // 追加（大会詳細）
             ps.setString(i++, tournament.getVenue());
             ps.setString(i++, tournament.getGameTitle());
             ps.setString(i++, tournament.getTournamentFormat());
-            ps.setInt(i++, tournament.getEntryFeeYen());               // 円なので int
-            ps.setObject(i++, tournament.getRegistrationDeadline());   // LocalDateTime（null可）
+            ps.setInt(i++, tournament.getEntryFeeYen());
+            ps.setObject(i++, tournament.getRegistrationDeadline());
 
             ps.setString(i++, tournament.getMatchFormat());
             ps.setInt(i++, tournament.getTimeLimitMinutes());
@@ -61,23 +58,29 @@ public class TournamentsDAO {
             ps.setString(i++, tournament.getPrizeSecond());
             ps.setString(i++, tournament.getPrizeThird());
 
-            // 今回追加（単数）
-            ps.setInt(i++, tournament.getEntryRequirement());          // 0=条件なし運用
+            ps.setInt(i++, tournament.getEntryRequirement());
 
             ps.executeUpdate();
         }
     }
 
-    // 一覧（現状維持：必要最小限）
+    // 一覧（JOIN一発で参加者数も取得）
     public List<Tournament> findByOrganizerId(int organizerId) throws SQLException {
 
-        String sql = "SELECT "
-                   + "tournament_id, name, organizer_id, event_date, event_time, "
-                   + "max_participants, current_participants, description, status, "
-                   + "created_at, updated_at "
-                   + "FROM tournaments "
-                   + "WHERE organizer_id = ? "
-                   + "ORDER BY event_date ASC, event_time ASC, tournament_id ASC";
+        String sql =
+            "SELECT "
+          + "  t.tournament_id, t.name, t.organizer_id, t.event_date, t.event_time, "
+          + "  t.max_participants, t.description, t.status, "
+          + "  COALESCE(p.cnt, 0) AS participant_count, "
+          + "  t.created_at, t.updated_at "
+          + "FROM tournaments t "
+          + "LEFT JOIN ( "
+          + "  SELECT tournament_id, COUNT(*) AS cnt "
+          + "  FROM participants "
+          + "  GROUP BY tournament_id "
+          + ") p ON p.tournament_id = t.tournament_id "
+          + "WHERE t.organizer_id = ? "
+          + "ORDER BY t.event_date ASC, t.event_time ASC, t.tournament_id ASC";
 
         List<Tournament> list = new ArrayList<>();
 
@@ -93,21 +96,18 @@ public class TournamentsDAO {
                     t.setName(rs.getString("name"));
                     t.setOrganizerId(rs.getInt("organizer_id"));
 
-                    LocalDate eventDate = rs.getObject("event_date", LocalDate.class);
-                    LocalTime eventTime = rs.getObject("event_time", LocalTime.class);
-                    LocalDateTime createdAt = rs.getObject("created_at", LocalDateTime.class);
-                    LocalDateTime updatedAt = rs.getObject("updated_at", LocalDateTime.class);
-
-                    t.setEventDate(eventDate);
-                    t.setEventTime(eventTime);
+                    t.setEventDate(rs.getObject("event_date", LocalDate.class));
+                    t.setEventTime(rs.getObject("event_time", LocalTime.class));
 
                     t.setMaxParticipants(rs.getInt("max_participants"));
-                    t.setCurrentParticipants(rs.getInt("current_participants"));
                     t.setDescription(rs.getString("description"));
                     t.setStatus(rs.getInt("status"));
 
-                    t.setCreatedAt(createdAt);
-                    t.setUpdatedAt(updatedAt);
+                    // ★参加者数（表示用）
+                    t.setParticipantCount(rs.getInt("participant_count"));
+
+                    t.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+                    t.setUpdatedAt(rs.getObject("updated_at", LocalDateTime.class));
 
                     list.add(t);
                 }
@@ -117,19 +117,26 @@ public class TournamentsDAO {
         return list;
     }
 
-    // 設定画面用：大会IDで1件取得（全カラム）
+    // 設定画面用：大会IDで1件取得（全カラム + 参加者数）
     public Tournament findByTournamentId(int tournamentId) throws SQLException {
 
-        String sql = "SELECT "
-                   + "tournament_id, name, organizer_id, event_date, event_time, "
-                   + "max_participants, current_participants, description, status, "
-                   + "venue, game_title, tournament_format, entry_fee_yen, registration_deadline, "
-                   + "match_format, time_limit_minutes, draw_rule, "
-                   + "prize_first, prize_second, prize_third, "
-                   + "entry_requirement, "
-                   + "created_at, updated_at "
-                   + "FROM tournaments "
-                   + "WHERE tournament_id = ?";
+        String sql =
+            "SELECT "
+          + "  t.tournament_id, t.name, t.organizer_id, t.event_date, t.event_time, "
+          + "  t.max_participants, t.description, t.status, "
+          + "  t.venue, t.game_title, t.tournament_format, t.entry_fee_yen, t.registration_deadline, "
+          + "  t.match_format, t.time_limit_minutes, t.draw_rule, "
+          + "  t.prize_first, t.prize_second, t.prize_third, "
+          + "  t.entry_requirement, "
+          + "  COALESCE(p.cnt, 0) AS participant_count, "
+          + "  t.created_at, t.updated_at "
+          + "FROM tournaments t "
+          + "LEFT JOIN ( "
+          + "  SELECT tournament_id, COUNT(*) AS cnt "
+          + "  FROM participants "
+          + "  GROUP BY tournament_id "
+          + ") p ON p.tournament_id = t.tournament_id "
+          + "WHERE t.tournament_id = ?";
 
         try (Connection con = DBUtil.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -149,7 +156,6 @@ public class TournamentsDAO {
                 t.setEventTime(rs.getObject("event_time", LocalTime.class));
 
                 t.setMaxParticipants(rs.getInt("max_participants"));
-                t.setCurrentParticipants(rs.getInt("current_participants"));
                 t.setDescription(rs.getString("description"));
                 t.setStatus(rs.getInt("status"));
 
@@ -167,8 +173,10 @@ public class TournamentsDAO {
                 t.setPrizeSecond(rs.getString("prize_second"));
                 t.setPrizeThird(rs.getString("prize_third"));
 
-                // 今回追加（単数）
                 t.setEntryRequirement(rs.getInt("entry_requirement"));
+
+                // ★参加者数（表示用）
+                t.setParticipantCount(rs.getInt("participant_count"));
 
                 t.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
                 t.setUpdatedAt(rs.getObject("updated_at", LocalDateTime.class));
@@ -179,7 +187,6 @@ public class TournamentsDAO {
     }
 
     // 設定画面用：詳細一式を更新（entry_requirement も更新対象）
-    // organizer_id もWHEREに入れて、他人の大会更新を防ぐ
     public int updateTournament(Tournament t) throws SQLException {
 
         String sql = "UPDATE tournaments SET "

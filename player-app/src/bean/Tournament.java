@@ -12,8 +12,10 @@ public class Tournament {
     private LocalDate eventDate;
     private LocalTime eventTime;
     private int maxParticipants;
-    private int currentParticipants;
     private String description;
+
+    // 表示用（participantsをCOUNTした結果）
+    private int participantCount;
 
     // 追加フィールド（大会詳細を統合）
     private String venue;                       // 会場
@@ -44,8 +46,9 @@ public class Tournament {
         LocalDate eventDate,
         LocalTime eventTime,
         int maxParticipants,
-        int currentParticipants,
         String description,
+
+        int participantCount,
 
         String venue,
         String gameTitle,
@@ -71,8 +74,9 @@ public class Tournament {
         this.eventDate = eventDate;
         this.eventTime = eventTime;
         this.maxParticipants = maxParticipants;
-        this.currentParticipants = currentParticipants;
         this.description = description;
+
+        this.participantCount = participantCount;
 
         this.venue = venue;
         this.gameTitle = gameTitle;
@@ -141,14 +145,6 @@ public class Tournament {
         this.maxParticipants = maxParticipants;
     }
 
-    public int getCurrentParticipants() {
-        return currentParticipants;
-    }
-
-    public void setCurrentParticipants(int currentParticipants) {
-        this.currentParticipants = currentParticipants;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -157,7 +153,14 @@ public class Tournament {
         this.description = description;
     }
 
-    // ---- 追加フィールド getters/setters ----
+    // 参加者数（表示用）
+    public int getParticipantCount() {
+        return participantCount;
+    }
+
+    public void setParticipantCount(int participantCount) {
+        this.participantCount = participantCount;
+    }
 
     public String getVenue() {
         return venue;
@@ -247,7 +250,6 @@ public class Tournament {
         this.prizeThird = prizeThird;
     }
 
-    // 今回追加（単数）
     public int getEntryRequirement() {
         return entryRequirement;
     }
@@ -255,8 +257,6 @@ public class Tournament {
     public void setEntryRequirement(int entryRequirement) {
         this.entryRequirement = entryRequirement;
     }
-
-    // ---- 既存フィールド ----
 
     public int getStatus() {
         return status;

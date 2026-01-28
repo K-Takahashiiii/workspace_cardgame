@@ -17,6 +17,7 @@
 <%
   String ctx = request.getContextPath();
   String error = (String) request.getAttribute("error");
+  @SuppressWarnings("unchecked")
   List<Tournament> tournaments = (List<Tournament>) request.getAttribute("tournaments");
 %>
 
@@ -47,6 +48,7 @@
         <th>会場</th>
         <th>開催日</th>
         <th>締切</th>
+        <th>参加</th>
         <th>参加条件</th>
         <th>詳細</th>
       </tr>
@@ -58,6 +60,7 @@
           <td><%= t.getVenue() %></td>
           <td><%= (t.getEventDate() != null ? t.getEventDate().toString() : "") %></td>
           <td><%= (t.getRegistrationDeadline() != null ? t.getRegistrationDeadline().toString() : "") %></td>
+          <td><%= t.getParticipantCount() %> / <%= t.getMaxParticipants() %></td>
           <td><%= labelFor(t.getEntryRequirement()) %></td>
           <td>
             <a href="<%= ctx %>/tournament/detail?tournamentId=<%= t.getTournamentId() %>">詳細</a>

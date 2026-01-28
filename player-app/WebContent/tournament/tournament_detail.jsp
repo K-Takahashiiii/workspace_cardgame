@@ -14,6 +14,7 @@
   boolean isEntered = (entered != null && entered.booleanValue());
 
   // 参加者名リスト（未実装なら null のままでOK）
+  @SuppressWarnings("unchecked")
   List<String> participantNames = (List<String>) request.getAttribute("participantNames");
 %>
 
@@ -124,7 +125,7 @@ h1{
         <div class="row"><div>会場</div><div><%= t.getVenue() %></div></div>
         <div class="row"><div>使用ゲーム</div><div><%= t.getGameTitle() %></div></div>
         <div class="row"><div>形式</div><div><%= t.getTournamentFormat() %></div></div>
-        <div class="row"><div>定員</div><div><%= t.getCurrentParticipants() %> / <%= t.getMaxParticipants() %> 人</div></div>
+        <div class="row"><div>定員</div><div><%= t.getParticipantCount() %> / <%= t.getMaxParticipants() %> 人</div></div>
         <div class="row"><div>参加費</div><div><%= t.getEntryFeeYen() %> 円</div></div>
         <div class="row"><div>登録締切</div><div><%= fmtDeadline(t.getRegistrationDeadline()) %></div></div>
         <div class="row"><div>参加条件</div><div><%= entryReqLabel(t.getEntryRequirement()) %></div></div>

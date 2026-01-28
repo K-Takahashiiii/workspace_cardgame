@@ -15,15 +15,22 @@ import util.DBUtil;
 
 public class TournamentsDAO {
 
-    // プレイヤー側：大会一覧（必要最低限だけ）
+    // プレイヤー側：大会一覧（必要最低限 + 参加者数はCOUNTで取得）
     public List<Tournament> findAll() throws SQLException {
 
         String sql =
-            "SELECT tournament_id, name, venue, entry_requirement, " +
-            "       event_date, event_time, registration_deadline, " +
-            "       max_participants, current_participants, status " +
-            "FROM tournaments " +
-            "ORDER BY tournament_id DESC";
+            "SELECT " +
+            "  t.tournament_id, t.name, t.venue, t.entry_requirement, " +
+            "  t.event_date, t.event_time, t.registration_deadline, " +
+            "  t.max_participants, t.status, " +
+            "  COALESCE(p.cnt, 0) AS participant_count " +
+            "FROM tournaments t " +
+            "LEFT JOIN ( " +
+            "  SELECT tournament_id, COUNT(*) AS cnt " +
+            "  FROM participants " +
+            "  GROUP BY tournament_id " +
+            ") p ON p.tournament_id = t.tournament_id " +
+            "ORDER BY t.tournament_id DESC";
 
         List<Tournament> list = new ArrayList<>();
 
@@ -49,8 +56,10 @@ public class TournamentsDAO {
                 if (ddl != null) t.setRegistrationDeadline(ddl.toLocalDateTime());
 
                 t.setMaxParticipants(rs.getInt("max_participants"));
-                t.setCurrentParticipants(rs.getInt("current_participants"));
                 t.setStatus(rs.getInt("status"));
+
+                // ★現在参加者数：participantsをCOUNTした結果
+                t.setParticipantCount(rs.getInt("participant_count"));
 
                 list.add(t);
             }
@@ -59,18 +68,25 @@ public class TournamentsDAO {
         return list;
     }
 
-
-
-    // 追加：大会IDで1件取得（詳細表示用）
+    // 大会IDで1件取得（詳細表示用：全カラム + 参加者数はCOUNTで取得）
     public Tournament findById(int tournamentId) throws SQLException {
+
         String sql =
-            "SELECT tournament_id, name, organizer_id, event_date, event_time, " +
-            "       max_participants, current_participants, description, " +
-            "       venue, game_title, tournament_format, entry_fee_yen, registration_deadline, " +
-            "       match_format, time_limit_minutes, draw_rule, " +
-            "       prize_first, prize_second, prize_third, " +
-            "       entry_requirement, status, created_at, updated_at " +
-            "FROM tournaments WHERE tournament_id = ?";
+            "SELECT " +
+            "  t.tournament_id, t.name, t.organizer_id, t.event_date, t.event_time, " +
+            "  t.max_participants, t.description, " +
+            "  t.venue, t.game_title, t.tournament_format, t.entry_fee_yen, t.registration_deadline, " +
+            "  t.match_format, t.time_limit_minutes, t.draw_rule, " +
+            "  t.prize_first, t.prize_second, t.prize_third, " +
+            "  t.entry_requirement, t.status, t.created_at, t.updated_at, " +
+            "  COALESCE(p.cnt, 0) AS participant_count " +
+            "FROM tournaments t " +
+            "LEFT JOIN ( " +
+            "  SELECT tournament_id, COUNT(*) AS cnt " +
+            "  FROM participants " +
+            "  GROUP BY tournament_id " +
+            ") p ON p.tournament_id = t.tournament_id " +
+            "WHERE t.tournament_id = ?";
 
         try (Connection con = DBUtil.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -85,14 +101,13 @@ public class TournamentsDAO {
                 t.setName(rs.getString("name"));
                 t.setOrganizerId(rs.getInt("organizer_id"));
 
-                java.sql.Date d = rs.getDate("event_date");
+                Date d = rs.getDate("event_date");
                 if (d != null) t.setEventDate(d.toLocalDate());
 
-                java.sql.Time tm = rs.getTime("event_time");
+                Time tm = rs.getTime("event_time");
                 if (tm != null) t.setEventTime(tm.toLocalTime());
 
                 t.setMaxParticipants(rs.getInt("max_participants"));
-                t.setCurrentParticipants(rs.getInt("current_participants"));
                 t.setDescription(rs.getString("description"));
 
                 t.setVenue(rs.getString("venue"));
@@ -100,7 +115,7 @@ public class TournamentsDAO {
                 t.setTournamentFormat(rs.getString("tournament_format"));
                 t.setEntryFeeYen(rs.getInt("entry_fee_yen"));
 
-                java.sql.Timestamp ddl = rs.getTimestamp("registration_deadline");
+                Timestamp ddl = rs.getTimestamp("registration_deadline");
                 if (ddl != null) t.setRegistrationDeadline(ddl.toLocalDateTime());
 
                 t.setMatchFormat(rs.getString("match_format"));
@@ -114,19 +129,17 @@ public class TournamentsDAO {
                 t.setEntryRequirement(rs.getInt("entry_requirement"));
                 t.setStatus(rs.getInt("status"));
 
-                java.sql.Timestamp ca = rs.getTimestamp("created_at");
+                Timestamp ca = rs.getTimestamp("created_at");
                 if (ca != null) t.setCreatedAt(ca.toLocalDateTime());
 
-                java.sql.Timestamp ua = rs.getTimestamp("updated_at");
+                Timestamp ua = rs.getTimestamp("updated_at");
                 if (ua != null) t.setUpdatedAt(ua.toLocalDateTime());
+
+                // ★現在参加者数：participantsをCOUNTした結果
+                t.setParticipantCount(rs.getInt("participant_count"));
 
                 return t;
             }
         }
     }
-
-
-
-
-
 }
