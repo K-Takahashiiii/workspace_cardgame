@@ -63,7 +63,17 @@ public class LoginPlayerServlet extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("loginPlayer", player);
 
-            // 遷移先（必要なら変更）
+            // ★追加：ログイン前の「戻り先」があれば、そこへ戻す
+            // 例：/match/bracket?tournamentId=123
+            //     /match/input?tournamentId=123&matchId=45
+            String afterLoginPath = (String) session.getAttribute("afterLoginPath");
+            if (afterLoginPath != null && !afterLoginPath.isEmpty()) {
+                session.removeAttribute("afterLoginPath"); // 使い捨て
+                response.sendRedirect(request.getContextPath() + afterLoginPath);
+                return;
+            }
+
+            // 戻り先が無いなら、従来通り成功画面へ
             RequestDispatcher rd =
                     request.getRequestDispatcher("/auth/login_player_success.jsp");
             rd.forward(request, response);

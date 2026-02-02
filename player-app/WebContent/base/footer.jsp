@@ -22,4 +22,7 @@
     &nbsp;|&nbsp;
     <a href="<%= ctx %>/registerPlayer">新規登録</a>
   <% } %>
+
+  <a href="<%= request.getContextPath() %>/match/bracket?tournamentId=1">大会進行</a>
+
 </footer>
