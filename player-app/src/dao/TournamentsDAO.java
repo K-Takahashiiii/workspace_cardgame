@@ -142,4 +142,18 @@ public class TournamentsDAO {
             }
         }
     }
+
+    // ★大会ステータス更新（例：開催中=2, 終了=3）
+    public int updateStatus(int tournamentId, int status) throws SQLException {
+
+        String sql = "UPDATE tournaments SET status = ?, updated_at = NOW() WHERE tournament_id = ?";
+
+        try (Connection con = DBUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, status);
+            ps.setInt(2, tournamentId);
+            return ps.executeUpdate();
+        }
+    }
 }

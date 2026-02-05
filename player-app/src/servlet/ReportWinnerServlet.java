@@ -11,9 +11,12 @@ import javax.servlet.http.HttpSession;
 
 import bean.Player;
 import dao.MatchesDAO;
+import dao.ResultsDAO;
+import dao.TournamentsDAO;
 
 @WebServlet("/match/reportWinner")
 public class ReportWinnerServlet extends HttpServlet {
+
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -32,7 +35,21 @@ public class ReportWinnerServlet extends HttpServlet {
 
         try {
             MatchesDAO dao = new MatchesDAO();
-            dao.reportWinner(tournamentId, matchId, winnerId, loginPlayer.getUserNum());
+
+            // 1=成功, 0=既に確定, -1=不正
+            int r = dao.reportWinner(tournamentId, matchId, winnerId, loginPlayer.getUserNum());
+
+            if (r == 1) {
+                ResultsDAO rdao = new ResultsDAO();
+
+                // 決勝確定して results 保存までできたら true が返る想定
+                boolean finalized = rdao.upsertIfFinalized(tournamentId);
+
+                if (finalized) {
+                    new TournamentsDAO().updateStatus(tournamentId, 3); // 3=終了
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

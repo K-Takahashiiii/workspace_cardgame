@@ -82,6 +82,8 @@
               <td><%= statusLabel(t.getStatus()) %></td>
               <td>
                 <a href="<%= ctx %>/optioningTournament?tournamentId=<%= t.getTournamentId() %>">詳細設定</a>
+                &nbsp;|&nbsp;
+                <a href="<%= ctx %>/tournament/start?tournamentId=<%= t.getTournamentId() %>">大会開始</a>
               </td>
             </tr>
         <%

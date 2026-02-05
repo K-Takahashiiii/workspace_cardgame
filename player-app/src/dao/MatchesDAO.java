@@ -88,7 +88,7 @@ public class MatchesDAO {
                     for (int i = 0; i < mc; i++) {
                         psIns.setInt(1, tournamentId);
                         psIns.setInt(2, r);
-                        psIns.setInt(3, i);
+                        psIns.setInt(3, i); // 0始まり
                         psIns.setNull(4, Types.INTEGER);
                         psIns.setNull(5, Types.INTEGER);
                         psIns.addBatch();
@@ -268,25 +268,14 @@ public class MatchesDAO {
             // 次ラウンドへ繰り上げ（最終ラウンドは不要）
             if (roundNo < maxRound) {
                 int nextRound = roundNo + 1;
-                int nextIndex = matchIndex / 2;
-                boolean toP1Slot = (matchIndex % 2 == 0);
+                int nextIndex = matchIndex / 2;              // match_index は 0始まり前提
+                boolean preferP1Slot = (matchIndex % 2 == 0); // 0,2,4.. → player1 / 1,3,5.. → player2
 
-                String up =
-                    toP1Slot
-                    ? "UPDATE matches SET player1_id = ? " +
-                      "WHERE tournament_id = ? AND round_no = ? AND match_index = ? " +
-                      "  AND (player1_id IS NULL OR player1_id = ?)"
-                    : "UPDATE matches SET player2_id = ? " +
-                      "WHERE tournament_id = ? AND round_no = ? AND match_index = ? " +
-                      "  AND (player2_id IS NULL OR player2_id = ?)";
-
-                try (PreparedStatement ps = con.prepareStatement(up)) {
-                    ps.setInt(1, winnerId);
-                    ps.setInt(2, tournamentId);
-                    ps.setInt(3, nextRound);
-                    ps.setInt(4, nextIndex);
-                    ps.setInt(5, winnerId);
-                    ps.executeUpdate();
+                int advanced = advanceWinnerToNextRound(con, tournamentId, nextRound, nextIndex, winnerId, preferP1Slot);
+                if (advanced != 1) {
+                    // ここが0になるのは「入れ先が見つからない」「両方埋まってて入れられない」などの異常系
+                    con.rollback();
+                    return -1;
                 }
             }
 
@@ -305,6 +294,54 @@ public class MatchesDAO {
     }
 
     // ===== private =====
+
+    /**
+     * 次ラウンドへ勝者を流し込む。
+     * まず preferP1Slot で指定された枠を試し、ダメなら反対枠を試す。
+     * （入力順が逆でも必ず「空いてる枠」に入るようにするため）
+     */
+    private int advanceWinnerToNextRound(Connection con, int tournamentId, int nextRound, int nextIndex, int winnerId, boolean preferP1Slot)
+            throws SQLException {
+
+        int updated;
+
+        if (preferP1Slot) {
+            updated = updateNextSlot(con, tournamentId, nextRound, nextIndex, winnerId, true);
+            if (updated == 0) {
+                updated = updateNextSlot(con, tournamentId, nextRound, nextIndex, winnerId, false);
+            }
+        } else {
+            updated = updateNextSlot(con, tournamentId, nextRound, nextIndex, winnerId, false);
+            if (updated == 0) {
+                updated = updateNextSlot(con, tournamentId, nextRound, nextIndex, winnerId, true);
+            }
+        }
+
+        return updated;
+    }
+
+    private int updateNextSlot(Connection con, int tournamentId, int roundNo, int matchIndex, int winnerId, boolean toPlayer1)
+            throws SQLException {
+
+        String sql = toPlayer1
+            ? "UPDATE matches SET player1_id = ? " +
+              "WHERE tournament_id = ? AND round_no = ? AND match_index = ? " +
+              "  AND winner_id IS NULL " +
+              "  AND (player1_id IS NULL OR player1_id = ?)"
+            : "UPDATE matches SET player2_id = ? " +
+              "WHERE tournament_id = ? AND round_no = ? AND match_index = ? " +
+              "  AND winner_id IS NULL " +
+              "  AND (player2_id IS NULL OR player2_id = ?)";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, winnerId);
+            ps.setInt(2, tournamentId);
+            ps.setInt(3, roundNo);
+            ps.setInt(4, matchIndex);
+            ps.setInt(5, winnerId);
+            return ps.executeUpdate();
+        }
+    }
 
     private Match readMatchRow(ResultSet rs) throws SQLException {
         Match m = new Match();
