@@ -2,7 +2,9 @@
 package servlet;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URLEncoder;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
@@ -112,13 +114,33 @@ public class TournamentQrServlet extends HttpServlet {
     private String buildJoinUrl(HttpServletRequest request, int tournamentId) {
         // 例: http://localhost:8080/player-app/match/bracket?tournamentId=123
         String scheme = request.getScheme();
-        String host = request.getServerName();
+
+
+
+
+//        String host = request.getServerName();
+//        String ipv4 = inetAddress.getHostAddress();
+
+        String ipv4 = "";
+
+        InetAddress inetAddress;
+		try {
+			inetAddress = InetAddress.getLocalHost();
+			ipv4 = inetAddress.getHostAddress();
+			System.out.println(ipv4);
+		} catch (UnknownHostException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+
+
+
         int port = request.getServerPort();
 
         boolean defaultPort = ("http".equalsIgnoreCase(scheme) && port == 80)
                            || ("https".equalsIgnoreCase(scheme) && port == 443);
 
-        String base = scheme + "://" + host + (defaultPort ? "" : (":" + port));
+        String base = scheme + "://" + ipv4 + (defaultPort ? "" : (":" + port));
         return base + PLAYER_CONTEXT_PATH + "/match/bracket?tournamentId=" + tournamentId;
     }
 
